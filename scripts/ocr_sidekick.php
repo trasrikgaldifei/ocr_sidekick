@@ -3,6 +3,7 @@
 $config_dir = "/ocr_sidekick_mount/config";
 $input_dir = "/ocr_sidekick_mount/0_input";
 $output_dir = "/ocr_sidekick_mount/0_output";
+$processed_dir = "/ocr_sidekick_mount/0_processed";
 $work_dir = "/ocr_sidekick_mount/workdir";
 $log_dir = "/ocr_sidekick_mount/logs";
 $temp_dir = "/ocr_sidekick_mount/temp";
@@ -49,7 +50,8 @@ function read_output($output_file)
 		while ($output_text = fgets($output_file_handle))
 		{
 			$output_text = str_replace("\n", "", $output_text);
-			log_write($output_text);
+			if ($output_text <> "")
+				log_write($output_text);
 		}
 		fclose($output_file_handle);
 		unlink($temp_dir . "/" . $output_file);
@@ -84,7 +86,7 @@ while(true)
 		
 		# Set working files
 		$input_file = $input_dir . "/" . $file;
-		$output_file = $output_dir . "/ocr/" . $file;
+		$output_file = $output_dir . "/" . $file;
 		$work_file = $work_dir . "/" . $temp_filename . ".pdf";
 		$work_file_text = $work_dir . "/" . $temp_filename . ".txt";
 		$work_file_ocr = $work_dir . "/" . $temp_filename . "_ocr.pdf";
@@ -97,7 +99,8 @@ while(true)
 		$telegram_message .= "Found new PDF: " . $file . "\n";
 
 		# Move PDF to work dir...
-		log_write("Moving PDF to work directory...");
+		log_write("Moving PDF to work directory... (" . $work_file . ")");
+		chmod($input_file, 0755);
 		rename($input_file, $work_file);
 
 		# Run OCR
@@ -139,9 +142,14 @@ while(true)
 		log_write("Setting access rights for output file...");
 		chmod($output_file, 0755);
 
+		# Delete work files
+		log_write("Deleting work files...");
+		unlink($work_file_ocr);
+		#unlink($work_file_text);
+		
 		# Move processed file to processed folder
-		log_write("Moving processed file to " . $output_dir . "/processed/" . $file);
-		rename($work_file, $output_dir . "/processed/" . $file);
+		log_write("Moving processed file to " . $processed_dir . "/" . $file);
+		rename($work_file, $processed_dir . "/" . $file);
 		log_write("Finished.");
 		
 		if (isset($telegram_token))

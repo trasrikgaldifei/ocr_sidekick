@@ -7,6 +7,10 @@ then
 fi
 
 cd /ocr_sidekick
-php ocr_sidekick.php
 
-tail -f /dev/null
+ocrmypdf --version >/ocr_sidekick_mount/version.txt
+
+while :
+do
+  php ocr_sidekick.php
+done
