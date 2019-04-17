@@ -52,7 +52,7 @@ RUN python3 -m venv --system-site-packages /ocrmypdf_env
 RUN . /ocrmypdf_env/bin/activate; \
   pip install --upgrade pip \
   && pip install --upgrade ocrmypdf
-RUN wget --no-check-certificate https://github.com/jbarlow83/OCRmyPDF/blob/master/requirements/test.txt \
+RUN wget --no-check-certificate https://raw.githubusercontent.com/jbarlow83/OCRmyPDF/master/requirements/test.txt \
   && . /ocrmypdf_env/bin/activate; \
   pip install -r test.txt \
   && rm test.txt;
