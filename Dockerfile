@@ -1,5 +1,5 @@
 # DOCKERFILE for ocr_sidekick
-# Date: 2019-04-12
+# Date: 2019-04-17
 
 FROM debian:buster-slim
 MAINTAINER Trasrik Galdifei <docker@heilig.cc>
@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ocrmypdf \
   php7.3-cli \
   poppler-utils \
+  python3-pip \
+  python3-venv \
   tesseract-ocr \
   tesseract-ocr-deu \
   tesseract-ocr-eng \
@@ -44,6 +46,16 @@ RUN mkdir jbig2 \
   && ./autogen.sh && ./configure && make && make install \
   && cd .. \
   && rm -rf jbig2
+
+# Install newest ocrmypdf version (PIP venv)
+RUN python3 -m venv --system-site-packages /ocrmypdf_env
+RUN . /ocrmypdf_env/bin/activate; \
+  pip install --upgrade pip \
+  && pip install --upgrade ocrmypdf
+RUN wget --no-check-certificate https://github.com/jbarlow83/OCRmyPDF/blob/master/requirements/test.txt \
+  && . /ocrmypdf_env/bin/activate; \
+  pip install -r test.txt \
+  && rm test.txt;
 
 # Install OCR Sidekick
 RUN mkdir -p /ocr_sidekick && chmod 777 /ocr_sidekick
