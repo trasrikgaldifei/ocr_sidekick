@@ -108,7 +108,7 @@ ADD scripts/config.php /ocr_sidekick_source/config/config.php
 ADD scripts/tags.php /ocr_sidekick_source/config/tags.php
 ADD scripts/tags.php /ocr_sidekick_source/config/sender.php
 RUN chmod 0777 /ocr_sidekick_source/config/config.php \
-  && chmod 0777 /ocr_sidekick_source/config/tags.php
+  && chmod 0777 /ocr_sidekick_source/config/tags.php \
   && chmod 0777 /ocr_sidekick_source/config/sender.php
   
 # Initially populate mounted dir (in case no directory is mounted)
