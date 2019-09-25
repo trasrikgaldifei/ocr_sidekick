@@ -1,5 +1,5 @@
 # DOCKERFILE for ocr_sidekick
-# Date: 2019-04-12
+# Date: 2019-09-25
 
 FROM debian:buster-slim
 MAINTAINER Trasrik Galdifei <docker@heilig.cc>
@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ocrmypdf \
   php7.3-cli \
   poppler-utils \
+  python3-pip \
+  python3-venv \
   tesseract-ocr \
   tesseract-ocr-deu \
   tesseract-ocr-eng \
@@ -45,11 +47,23 @@ RUN mkdir jbig2 \
   && cd .. \
   && rm -rf jbig2
 
+# Install newest ocrmypdf version (PIP venv)
+RUN python3 -m venv --system-site-packages /ocrmypdf_env
+RUN . /ocrmypdf_env/bin/activate; \
+  pip install --upgrade pip \
+  && pip install --upgrade ocrmypdf
+RUN wget --no-check-certificate https://raw.githubusercontent.com/jbarlow83/OCRmyPDF/master/requirements/test.txt \
+  && . /ocrmypdf_env/bin/activate; \
+  pip install -r test.txt \
+  && rm test.txt;
+
 # Install OCR Sidekick
 RUN mkdir -p /ocr_sidekick && chmod 777 /ocr_sidekick
 WORKDIR /ocr_sidekick
-ADD scripts/ocr_sidekick.php ./ocr_sidekick.php
-RUN chmod 0777 ocr_sidekick.php
+ADD scripts/ocr_sidekick.class.php ./ocr_sidekick.class.php
+ADD scripts/ocr_sidekick_worker.php ./ocr_sidekick_worker.php
+RUN chmod 0777 ocr_sidekick.class.php \
+  && chmod 0777 ocr_sidekick_worker.php
 
 # Install composer
 WORKDIR /ocr_sidekick
@@ -86,16 +100,18 @@ RUN mkdir -p /ocr_sidekick_source \
   && chmod 777 /ocr_sidekick_source/config \
   && mkdir -p /ocr_sidekick_source/logs \
   && chmod 777 /ocr_sidekick_source/logs \
-  && mkdir -p /ocr_sidekick_source/temp \
-  && chmod 777 /ocr_sidekick_source/temp \
   && mkdir -p /ocr_sidekick_source/workdir \
   && chmod 777 /ocr_sidekick_source/workdir
 
-# Add config file  
+# Add config files  
 ADD scripts/config.php /ocr_sidekick_source/config/config.php
-RUN chmod 0777 /ocr_sidekick_source/config/config.php
-
-# Initially populate mounted dir (if no directory is mounted)
+ADD scripts/tags.php /ocr_sidekick_source/config/tags.php
+ADD scripts/tags.php /ocr_sidekick_source/config/sender.php
+RUN chmod 0777 /ocr_sidekick_source/config/config.php \
+  && chmod 0777 /ocr_sidekick_source/config/tags.php
+  && chmod 0777 /ocr_sidekick_source/config/sender.php
+  
+# Initially populate mounted dir (in case no directory is mounted)
 RUN mkdir -p /ocr_sidekick_mount \
   && chmod 777 /ocr_sidekick_mount \
   && cp -Rf /ocr_sidekick_source/* /ocr_sidekick_mount

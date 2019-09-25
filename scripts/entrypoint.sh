@@ -8,9 +8,13 @@ fi
 
 cd /ocr_sidekick
 
+. /ocrmypdf_env/bin/activate
 ocrmypdf --version >/ocr_sidekick_mount/version.txt
 
 while :
 do
-  php ocr_sidekick.php
+  php ocr_sidekick_worker.php >/dev/nul &2>1
+  sleep 30
 done
+
+deactivate
