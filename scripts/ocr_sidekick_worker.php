@@ -12,6 +12,5 @@
 	$ocr_sidekick = new ocr_sidekick();
 	$ocr_sidekick->scan_input_dir();
 	$ocr_sidekick->process_files();
-	$ocr_sidekick->telegram_send();
 	unset($ocr_sidekick);
 ?>

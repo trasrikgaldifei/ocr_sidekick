@@ -1,5 +1,5 @@
 # DOCKERFILE for ocr_sidekick
-# Date: 2019-04-22
+# Date: 2019-09-25
 
 FROM debian:buster-slim
 MAINTAINER Trasrik Galdifei <docker@heilig.cc>
@@ -106,10 +106,12 @@ RUN mkdir -p /ocr_sidekick_source \
 # Add config files  
 ADD scripts/config.php /ocr_sidekick_source/config/config.php
 ADD scripts/tags.php /ocr_sidekick_source/config/tags.php
+ADD scripts/tags.php /ocr_sidekick_source/config/sender.php
 RUN chmod 0777 /ocr_sidekick_source/config/config.php \
   && chmod 0777 /ocr_sidekick_source/config/tags.php
-
-# Initially populate mounted dir (if no directory is mounted)
+  && chmod 0777 /ocr_sidekick_source/config/sender.php
+  
+# Initially populate mounted dir (in case no directory is mounted)
 RUN mkdir -p /ocr_sidekick_mount \
   && chmod 777 /ocr_sidekick_mount \
   && cp -Rf /ocr_sidekick_source/* /ocr_sidekick_mount

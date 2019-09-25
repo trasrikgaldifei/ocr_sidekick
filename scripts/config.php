@@ -5,7 +5,7 @@
 	#########################################
 	# File:			config.php				#
 	# Author:		Trasrik Galdifei		#
-	# Last change:	2019-04-22				#
+	# Last change:	2019-09-25				#
 	#########################################
 	
 	/*-- PDF Metadata
@@ -21,7 +21,7 @@
 	If left empty, the according setting will be skipped.
 	*/
 	$tesseract_oversample = "";												// Oversample value in dpi (if empty, standard is 200 dpi). This can be used to increase result accuracy.
-	$tesseract_rotate_threshold = "5";										// Rotate threshold for auto rotation of ppages
+	$tesseract_rotate_threshold = "5";										// Rotate threshold for auto rotation of pages
 
 	/*-- Token for Telegram Bot
 	In this section, variables for the use of a telegram bot are set up.
@@ -32,4 +32,7 @@
 	$telegram_token = "";													// Token for your Telegram bot (get from BotFather)
 	$telegram_recipient = "";												// Your Telegram chat ID (get from IDBot)
 
+	/*-- Debug Settings */
+	$debug_keep_ocr_file = false;											// Keep the OCR file in the workdir
+	
 ?>
