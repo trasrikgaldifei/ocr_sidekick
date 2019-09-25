@@ -254,6 +254,7 @@
 			
 			// Apply directory tags
 			if ($dir_tag != "")
+				array_push($this->tags_found, $dir_tag);
 			
 			// Add fixed tags
 			for ($i = 0; $i < count($this->fixed_tags); $i++)
